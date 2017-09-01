@@ -1,0 +1,42 @@
+const express    = require('express');
+const mongoose   = require('mongoose');
+const helmet     = require('helmet');
+const bodyParser = require('body-parser');
+const morgan     = require('morgan');
+const bluebird   = require('bluebird');
+const jwt        = require('express-jwt');
+
+const config = require('./config');
+const routes = require('./routes');
+
+const app  = express();
+
+mongoose.Promise = bluebird;
+mongoose.connect(config.mongo.url);
+
+app.set('json spaces', 2);
+
+app.use(helmet());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(morgan('tiny'));
+
+const jwtWhitelist = ['/', '/user/login', '/api-docs'];
+
+app.use(jwt({secret: 'mega_token_secret'}).unless({path: jwtWhitelist}));
+app.use('/', routes);
+
+app.use((err, req, res, next) => {
+  if (err.name === "UnauthorizedError") {
+    res.status(401).json({ error: 'This resource is protected by authentication' });
+    return;
+  }
+  console.error(err);
+  res.status(500).json({error: 'Internal Server Error'});
+});
+
+app.listen(config.server.port, () => {
+  console.log(`Magic happens on port ${config.server.port}`);
+});
+
+module.exports = app;
