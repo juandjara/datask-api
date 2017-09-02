@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "docs": "documentation serve --watch --config jsdoc.conf index.js"
   },
   "engines": {
     "node": ">=6"
@@ -23,7 +24,6 @@
     "morgan": "^1.7.0"
   },
   "devDependencies": {
-    "apidoc": "^0.17.6",
     "eslint": "^3.11.1",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-plugin-import": "^2.2.0",
