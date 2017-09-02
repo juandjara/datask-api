@@ -7,10 +7,8 @@ basePath: /
 tags:
   - name: User
     description: Authentication and user data
-  - name: Examples
-    description: Simple example endpoints
-  - name: Specification
-    description: The swagger API specification
+
+host: localhost:8080
 
 securityDefinitions:
   bearer:
@@ -21,21 +19,49 @@ securityDefinitions:
 security:
   - bearer: []
 
+schemes: 
+  - http
+
 consumes:
   - application/json
 produces:
   - application/json
 
+responses:
+  UnauthorizedError:
+    description: Access token is missing or invalid
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  NotFoundError:
+    description: Entity not found
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+
 definitions:
-  ExampleBody:
+  ErrorMessage:
     type: object
-    title: example
-    required:
-      - name
     properties:
-      name:
+      error:
         type: string
-        description: The example name
+  User:
+    type: object
+    title: User
+    required:
+      - full_name
+      - email
+    properties:
+      _id:
+        type: string
+      full_name:
+        type: string
+        description: name and surname
+      email:
+        type: string
+        description: email adress
+      created_at:
+        type: string
+        format: date-time
+        description: date when the user was created
 
 paths:
   /user:
@@ -65,51 +91,55 @@ paths:
                 type: string
       responses:
         200:
-          description: Returns all examples
-
-  /examples:
+          description: ok
+        401:
+          $ref: '#/responses/UnauthorizedError'
+  /user/me:
     get:
       tags:
-        - Examples
-      description: Fetch all examples
+        - User
+      description: Get the current user
       responses:
         200:
-          description: Returns all examples
-    post:
+          description: ok
+          schema:
+            $ref: '#/definitions/User'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+    put:
       tags:
-        - Examples
-      description: Create a new example
-      parameters:
-        - name: example
+        - User
+      description: Update the current user
+      parameters: 
+        - name: user
           in: body
-          description: number of items to skip
           required: true
-          schema: 
-            $ref: "#/definitions/ExampleBody"
+          schema:
+            $ref: '#/definitions/User'
       responses:
-        200:
-          description: Returns all examples
-
-  /examples/{id}:
+        204:
+          description: updated
+        404:
+          $ref: '#/responses/NotFoundError'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+  /user/{id}:
     get:
       tags:
-        - Examples
+        - User
+      description: Fetch a single user
       parameters:
         - name: id
           in: path
           required: true
-          description: The id of the entity to retrieve
+          description: The id of the user to fetch
           type: integer
       responses:
         200:
-          description: Return the example with the specified id
+          description: User found
+          schema:
+            $ref: '#/definitions/User'
+        401:
+          $ref: '#/responses/UnauthorizedError'
         404:
-          description: Example not 
-
-  /spec:
-    get:
-      tags:
-        - Specification
-      responses:
-        200:
-          description: Return the API specification
+          $ref: '#/responses/NotFoundError'
