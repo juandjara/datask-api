@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const morgan     = require('morgan');
 const bluebird   = require('bluebird');
 const jwt        = require('express-jwt');
+const cors = require('cors')
 
 const config = require('./config');
 const routes = require('./routes');
@@ -16,6 +17,7 @@ mongoose.connect(config.mongo.url);
 
 app.set('json spaces', 2);
 
+app.use(cors());
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -32,8 +34,8 @@ app.use((err, req, res, next) => {
     res.status(401).json({ error: 'This resource is protected by authentication' });
     return;
   }
-  console.error(err);
-  res.status(500).json({error: 'Internal Server Error'});
+  console.error(err.message);
+  res.status(500).json({error: 'Internal Server Error', message: err.message});
 });
 
 app.listen(config.server.port, () => {
