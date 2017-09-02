@@ -12,6 +12,15 @@ tags:
   - name: Specification
     description: The swagger API specification
 
+securityDefinitions:
+  bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+security:
+  - bearer: []
+
 consumes:
   - application/json
 produces:
@@ -37,6 +46,26 @@ paths:
       responses:
         200:
           description: Get a list of all users in the system
+  /user/login:
+    post:
+      tags:
+        - User
+      description: Log user and receive a token
+      parameters:
+        - name: credentials
+          in: body
+          description: credentials of the user
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+      responses:
+        200:
+          description: Returns all examples
 
   /examples:
     get:
