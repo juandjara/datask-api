@@ -19,16 +19,15 @@ class UserController extends Controller {
         if (!user || !user.comparePassword(req.body.password)) {
           return res.status(401).json({ error: 'Access denied. Wrong credentials' });
         }
-        const token = jwt.sign({
-          email: user.email,
-          fullName: user.fullName
-        }, 'mega_token_secret');
+        delete user._doc.hashed_password
+        const token = jwt.sign(user._doc, 'mega_token_secret', {expiresIn: '1d'});
         res.json({ token });
       })
       .catch(next);
   }
   getPrincipal(req, res, next) {
-    const userId = req.user.id;
+    console.log("PRINCIPAL", req.user)
+    const userId = req.user._id;
     this.facade.findById(userId)
       .then((user) => {
         if (!user) {
@@ -39,7 +38,7 @@ class UserController extends Controller {
       .catch(next);
   }
   updatePrincipal(req, res, next) {
-    const userId = req.user.id;
+    const userId = req.user._id;
     this.facade.update({ _id: userId }, req.body)
       .then((results) => {
         if (results.n < 1) { return res.status(404).json({error: 'User not found'}); }
