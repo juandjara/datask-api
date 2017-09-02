@@ -20,8 +20,9 @@ app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(morgan('tiny'));
+app.use('/swagger-ui', express.static('swagger-ui'))
 
-const jwtWhitelist = ['/', '/user/login', '/api-docs'];
+const jwtWhitelist = ['/', '/user/login'];
 
 app.use(jwt({secret: 'mega_token_secret'}).unless({path: jwtWhitelist}));
 app.use('/', routes);
