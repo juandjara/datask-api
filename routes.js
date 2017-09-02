@@ -2,13 +2,12 @@ const Router = require('express').Router;
 const router = new Router();
 
 const user = require('./model/user/router');
-const pet = require('./model/pet/router');
 const pkg = require('./package.json')
 
-const routes = [user, pet];
+const routes = [user];
 const startDate = new Date();
 
-router.route('/').get((req, res) => {
+router.get('/', (req, res) => {
   const links = ['/swagger-ui'].concat(routes.map(route => route.endpoint))
   const info = {
     links,
