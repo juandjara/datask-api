@@ -24,7 +24,6 @@ class UserController extends Controller {
       .catch(next);
   }
   getPrincipal(req, res, next) {
-    console.log("PRINCIPAL", req.user)
     const userId = req.user._id;
     this.facade.findById(userId)
       .then((user) => {
@@ -37,17 +36,9 @@ class UserController extends Controller {
   }
   updatePrincipal(req, res, next) {
     const userId = req.user._id;
-    this.facade.update({ _id: userId }, req.body)
-      .then((results) => {
-        if (results.n < 1) {
-          throw boom.notFound('user not found')
-        }
-        if (results.nModified < 1) {
-          return res.sendStatus(304)
-        }
-        res.sendStatus(204);
-      })
-      .catch(next);
+    this.facade.updateById(userId, req.body)
+      .then(user => res.json(user))
+      .catch(err => next(boom.wrap(err, 400)));
   }
 }
 
