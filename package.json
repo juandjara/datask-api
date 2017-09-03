@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "deploy": "now --dotenv --public",
+    "pre-deploy": "node deleteLastDeploy.js",
+    "deploy": "npm run pre-deploy && now --dotenv --public",
     "docs": "documentation serve --watch --config jsdoc.conf index.js"
   },
   "engines": {
@@ -32,6 +33,7 @@
     "valid-objectid": "0.0.2"
   },
   "devDependencies": {
+    "axios": "^0.16.2",
     "eslint": "^3.11.1",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-plugin-import": "^2.2.0",
