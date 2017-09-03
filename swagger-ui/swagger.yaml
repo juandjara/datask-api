@@ -36,6 +36,10 @@ responses:
     description: Entity not found
     schema:
       $ref: '#/definitions/ErrorMessage'
+  PermissionError:
+    description: Permission denied
+    schema:
+      $ref: '#/definitions/ErrorMessage'
 
 definitions:
   ErrorMessage:
@@ -108,6 +112,14 @@ paths:
       responses:
         200:
           description: Get a list of all users in the system
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserFromDB'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'
     post:
       tags: 
         - User
@@ -124,6 +136,8 @@ paths:
           schema:
             $ref: '#/definitions/UserFromDB'
         401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
           $ref: '#/responses/UnauthorizedError'
   /user/login:
     post:

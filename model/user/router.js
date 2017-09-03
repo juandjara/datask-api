@@ -1,10 +1,13 @@
 const controller = require('./controller');
 const Router = require('express').Router;
 const router = new Router();
+const jwtRoles = require('express-jwt-permissions')({
+  permissionsProperty: 'roles'
+})
 
 router.route('/')
-  .get((...args) => controller.find(...args))
-  .post((...args) => controller.register(...args));
+  .get(jwtRoles.check('ADMIN'), (...args) => controller.find(...args))
+  .post(jwtRoles.check('ADMIN'), (...args) => controller.register(...args));
 
 router.route('/me')
   .get(controller.getPrincipal.bind(controller))
