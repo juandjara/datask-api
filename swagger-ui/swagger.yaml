@@ -43,15 +43,18 @@ definitions:
     properties:
       error:
         type: string
-  User:
+      status:
+        type: number
+      name:
+        type: string
+  UserFromDB:
     type: object
     title: User
-    required:
-      - full_name
-      - email
     properties:
       _id:
         type: string
+      __v:
+        type: number
       full_name:
         type: string
         description: name and surname
@@ -62,6 +65,23 @@ definitions:
         type: string
         format: date-time
         description: date when the user was created
+  UserFromClient:
+    type: object
+    title: User
+    required:
+      - full_name
+      - email
+      - password
+    properties:
+      password:
+        type: string
+        description: will be hashed securely
+      full_name:
+        type: string
+        description: name and surname
+      email:
+        type: string
+        description: email adress
 
 paths:
   /user:
@@ -72,6 +92,23 @@ paths:
       responses:
         200:
           description: Get a list of all users in the system
+    post:
+      tags: 
+        - User
+      description: Create a new user
+      parameters: 
+        - name: user
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserFromClient'
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: '#/definitions/UserFromDB'
+        401:
+          $ref: '#/responses/UnauthorizedError'
   /user/login:
     post:
       tags:
@@ -91,7 +128,7 @@ paths:
                 type: string
       responses:
         200:
-          description: ok
+          description: OK
         401:
           $ref: '#/responses/UnauthorizedError'
   /user/me:
@@ -101,9 +138,9 @@ paths:
       description: Get the current user
       responses:
         200:
-          description: ok
+          description: OK
           schema:
-            $ref: '#/definitions/User'
+            $ref: '#/definitions/UserFromDB'
         401:
           $ref: '#/responses/UnauthorizedError'
     put:
@@ -115,10 +152,12 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/User'
+            $ref: '#/definitions/UserFromClient'
       responses:
-        204:
-          description: updated
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/UserFromDB'
         404:
           $ref: '#/responses/NotFoundError'
         401:
@@ -133,13 +172,56 @@ paths:
           in: path
           required: true
           description: The id of the user to fetch
-          type: integer
+          type: string
       responses:
         200:
-          description: User found
+          description: OK
           schema:
-            $ref: '#/definitions/User'
+            $ref: '#/definitions/UserFromDB'
         401:
           $ref: '#/responses/UnauthorizedError'
         404:
           $ref: '#/responses/NotFoundError'
+    put:
+      tags: 
+        - User
+      description: Updates and returns a user by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the user to fetch
+          type: string
+        - name: user
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserFromClient'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/UserFromDB'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        404:
+          $ref: '#/responses/NotFoundError'
+    delete:
+      tags: 
+        - User
+      description: deletes a user by id (does not return the deleted user)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the user to fetch
+          type: string
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        404:
+          $ref: '#/responses/NotFoundError'
+    
+    

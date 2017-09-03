@@ -6,19 +6,20 @@ const boom = require('boom');
 class UserController extends Controller {
   register(req, res, next) {
     this.facade.create(req.body)
-      .then((doc) => {
-        res.status(201).json(doc);
+      .then((user) => {
+        res.status(201).json(user);
       })
-      .catch(err => next(boom.wrap(err, 400)));
+      .catch(next);
   }
   authenticate(req, res, next) {
     this.facade.findOneWithPassword({ email: req.body.email })
       .then((user) => {
         if (!user || !user.comparePassword(req.body.password)) {
-          return res.status(401).json({ error: 'Access denied. Wrong credentials' });
+          return next(boom.unauthorized('Wrong credentials'))
         }
-        delete user._doc.hashed_password
-        const token = jwt.sign(user._doc, 'mega_token_secret', {expiresIn: '1d'});
+        const {email, full_name, created_at, _id} = user
+        const payload = {email, full_name, created_at, _id}
+        const token = jwt.sign(payload, 'mega_token_secret', {expiresIn: '1d'});
         res.json({ token });
       })
       .catch(next);
@@ -28,17 +29,17 @@ class UserController extends Controller {
     this.facade.findById(userId)
       .then((user) => {
         if (!user) {
-          throw boom.notFound('user not found')
+          return next(boom.notFound('user not found'))
         }
-        return res.json(user);
+        res.json(user);
       })
       .catch(next);
   }
   updatePrincipal(req, res, next) {
     const userId = req.user._id;
-    this.facade.updateById(userId, req.body)
+    this.facade.findByIdAndUpdate(userId, req.body)
       .then(user => res.json(user))
-      .catch(err => next(boom.wrap(err, 400)));
+      .catch(next)
   }
 }
 

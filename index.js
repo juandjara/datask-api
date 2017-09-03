@@ -35,6 +35,9 @@ app.use((err, req, res, next) => {
   if (err.isBoom) {
     status = err.output.statusCode
   }
+  if (err.name === "ValidationError") {
+    status = 400
+  }
   res.status(status)
      .json({name: err.name, status, error: err.message});
 });
