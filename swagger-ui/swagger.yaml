@@ -49,7 +49,7 @@ definitions:
         type: string
   UserFromDB:
     type: object
-    title: User
+    title: UserFromDB
     properties:
       _id:
         type: string
@@ -65,13 +65,22 @@ definitions:
         type: string
         format: date-time
         description: date when the user was created
+      roles:
+        type: array
+        items:
+          type: string
+          enum: 
+            - DEVELOPER
+            - ADMIN
+            - CUSTOMER
   UserFromClient:
     type: object
-    title: User
+    title: UserFromClient
     required:
       - full_name
       - email
       - password
+      - roles
     properties:
       password:
         type: string
@@ -82,7 +91,14 @@ definitions:
       email:
         type: string
         description: email adress
-
+      roles:
+        type: array
+        items:
+          type: string
+          enum: 
+            - DEVELOPER
+            - ADMIN
+            - CUSTOMER
 paths:
   /user:
     get:
