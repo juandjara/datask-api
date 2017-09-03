@@ -15,7 +15,7 @@ const userSchema = new Schema({
     lowercase: true,
     required: true
   },
-  hashed_password: {
+  password: {
     type: String,
     required: true,
     select: false
@@ -29,5 +29,14 @@ const userSchema = new Schema({
 userSchema.methods.comparePassword = function(password) {
   return bcrypt.compareSync(password, this.hashed_password);
 };
+
+userSchema.pre('save', function(next) {
+  const user = this
+  if (!user.isModified('password')) {
+    return next()
+  }
+  user.password = bcrypt.hashSync(user.password, 10);
+  next()
+})
 
 module.exports = mongoose.model('User', userSchema);

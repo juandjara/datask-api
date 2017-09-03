@@ -1,17 +1,15 @@
 const Controller = require('../../lib/controller');
 const userFacade = require('./facade');
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const boom = require('boom');
 
 class UserController extends Controller {
   register(req, res, next) {
-    req.body.hashed_password = bcrypt.hashSync(req.body.password, 10);
     this.facade.create(req.body)
       .then((doc) => {
-        delete doc.hashed_password;
         res.status(201).json(doc);
       })
-      .catch(err => next(err));
+      .catch(err => next(boom.wrap(err, 400)));
   }
   authenticate(req, res, next) {
     this.facade.findOneWithPassword({ email: req.body.email })
@@ -31,7 +29,7 @@ class UserController extends Controller {
     this.facade.findById(userId)
       .then((user) => {
         if (!user) {
-          return res.status(404).json({error: 'User not found'})
+          throw boom.notFound('user not found')
         }
         return res.json(user);
       })
@@ -41,8 +39,12 @@ class UserController extends Controller {
     const userId = req.user._id;
     this.facade.update({ _id: userId }, req.body)
       .then((results) => {
-        if (results.n < 1) { return res.status(404).json({error: 'User not found'}); }
-        if (results.nModified < 1) { return res.sendStatus(304); }
+        if (results.n < 1) {
+          throw boom.notFound('user not found')
+        }
+        if (results.nModified < 1) {
+          return res.sendStatus(304)
+        }
         res.sendStatus(204);
       })
       .catch(next);

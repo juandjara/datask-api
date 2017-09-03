@@ -30,12 +30,13 @@ app.use(jwt({secret: 'mega_token_secret'}).unless({path: jwtWhitelist}));
 app.use('/', routes);
 
 app.use((err, req, res, next) => {
-  if (err.name === "UnauthorizedError") {
-    res.status(401).json({ error: 'This resource is protected by authentication' });
-    return;
+  console.error(err)
+  let status = err.status || 500
+  if (err.isBoom) {
+    status = err.output.statusCode
   }
-  console.error(err.message);
-  res.status(500).json({error: 'Internal Server Error', message: err.message});
+  res.status(status)
+     .json({name: err.name, status, error: err.message});
 });
 
 app.listen(config.server.port, () => {
