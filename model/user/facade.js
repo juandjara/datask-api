@@ -5,7 +5,7 @@ class UserFacade extends Facade {
   findOneWithPassword(...args) {
     return this.Schema
       .findOne(...args)
-      .select("+hashed_password")
+      .select("+password")
       .exec();
   }
 }
