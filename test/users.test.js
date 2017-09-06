@@ -169,36 +169,89 @@ test(
   'admin should be able to get any user by id',
   async t => {
     const {token} = await login('admin', 'admin')
-    const user = await getMyself(token)
+    const user = await User.find({email: 'dev'}).exec()
 
     const res = await request(app)
-      .get(`/user/${user._id}`)
+      .get(`/user/${user[0]._id}`)
       .set('Authorization', `Bearer ${token}`)
 
     t.is(res.status, 200)
-    t.deepEqual(res.body, user)
+    t.is(JSON.stringify(res.body), JSON.stringify(user[0]))
   }
 )
 test(
   'developer should not be able to get any user by id',
   async t => {
     const {token} = await login('dev', 'dev')
-    const user = await getMyself(token)
+    const user = await User.find({email: 'dev'}).exec()
 
     const res = await request(app)
-      .get(`/user/${user._id}`)
+      .get(`/user/${user[0]._id}`)
       .set('Authorization', `Bearer ${token}`)
 
     t.is(res.status, 403)
-    t.is(res.body.error, 'Permission denied')    
+    t.is(res.body.error, 'Permission denied')
   }
 )
 
-test.todo('admin should be able to edit any user by id')
-test.todo('developer should not be able to edit any user by id')
+test(
+  'admin should be able to edit any user by id',
+  async t => {
+    const {token} = await login('admin', 'admin')
+    const user = await User.find({email: 'dev'}).exec()
 
-test.todo('admin should be able to delete any user by id')
-test.todo('developer should not be able to delete any user by id')
+    const res = await request(app)
+      .put(`/user/${user[0]._id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({full_name: 'dev edited'})
+
+    t.is(res.status, 200)
+    t.not(user.full_name, res.body.full_name)
+    t.is(res.body.full_name, 'dev edited')
+  }
+)
+test(
+  'developer should not be able to edit any user by id',
+  async t => {
+    const {token} = await login('dev', 'dev')
+    const user = await User.find({email: 'dev'}).exec()
+
+    const res = await request(app)
+      .put(`/user/${user[0]._id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({full_name: 'dev edited'})
+
+    t.is(res.status, 403)
+    t.is(res.body.error, 'Permission denied')
+  }
+)
+
+test(
+  'admin should be able to delete any user by id',
+  async t => {
+    const {token} = await login('admin', 'admin')
+    const user = await User.find({email: 'dev'}).exec()
+
+    const res = await request(app)
+      .delete(`/user/${user[0]._id}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    t.is(res.status, 200)
+  }
+)
+test(
+  'developer should not be able to delete any user by id',
+  async t => {
+    const {token} = await login('dev', 'dev')
+    const user = await User.find({email: 'dev'}).exec()
+
+    const res = await request(app)
+      .delete(`/user/${user[0]._id}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    t.is(res.status, 403)
+  }
+)
 
 test.afterEach.always(() => {
   User.remove({})
