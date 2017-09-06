@@ -105,6 +105,14 @@ definitions:
             - DEVELOPER
             - ADMIN
             - CUSTOMER
+  Project:
+    type: object
+    title: Project
+    required:
+      - name
+    properties:
+      name:
+        type: string
 paths:
   /user:
     get:
@@ -263,8 +271,89 @@ paths:
       responses: 
         200:
           description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Project'
         401:
           $ref: '#/responses/UnauthorizedError'
         403:
           $ref: '#/responses/PermissionError'
-
+    post:
+      tags:
+        - Project
+      description: Create a new project
+      parameters: 
+        - name: project
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Project'
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'
+  /project/{id}:
+    get:
+      tags:
+        - Project
+      description: Get project by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the project to fetch
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Project'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'   
+    put:
+      tags:
+        - Project
+      description: Edit a project
+      parameters: 
+        - name: project
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Project'
+        - name: id
+          in: path
+          required: true
+          description: The id of the project to edit
+          type: string
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'
+    delete:
+      tags:
+        - Project
+      description: Delete project by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the project to delete
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Project'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'   
