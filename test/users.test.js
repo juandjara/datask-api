@@ -27,6 +27,7 @@ const createTestUsers = async () => {
 test.before(async () => {
   const uri = await mongod.getConnectionString();
   process.env.MONGO_DB_URI = uri
+  process.env.NODE_ENV = 'test'
 
   app = require('../index')
 
@@ -145,10 +146,53 @@ test(
   }
 )
 
-test.todo('developer should not be able to create a new user')
+test(
+  'developer should not be able to create a new user',
+  async t => {
+    const {token} = await login('dev', 'dev')
+    const newUser = {
+      email: 'user 3',
+      password: 'user 3',
+      full_name: 'user 3'
+    }
+    const res = await request(app)
+      .post('/user')
+      .set('Authorization', `Bearer ${token}`)
+      .send(newUser)
 
-test.todo('admin should be able to get any user by id')
-test.todo('developer should not be able to get any user by id')
+    t.is(res.status, 403)
+    t.is(res.body.error, 'Permission denied')
+  }
+)
+
+test(
+  'admin should be able to get any user by id',
+  async t => {
+    const {token} = await login('admin', 'admin')
+    const user = await getMyself(token)
+
+    const res = await request(app)
+      .get(`/user/${user._id}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    t.is(res.status, 200)
+    t.deepEqual(res.body, user)
+  }
+)
+test(
+  'developer should not be able to get any user by id',
+  async t => {
+    const {token} = await login('dev', 'dev')
+    const user = await getMyself(token)
+
+    const res = await request(app)
+      .get(`/user/${user._id}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    t.is(res.status, 403)
+    t.is(res.body.error, 'Permission denied')    
+  }
+)
 
 test.todo('admin should be able to edit any user by id')
 test.todo('developer should not be able to edit any user by id')
