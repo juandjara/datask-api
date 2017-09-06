@@ -7,6 +7,8 @@ basePath: /
 tags:
   - name: User
     description: Authentication and user data
+  - name: Project
+    description: A project contains tasks and a list of members
 
 host: localhost:8080
 
@@ -253,5 +255,16 @@ paths:
           $ref: '#/responses/UnauthorizedError'
         404:
           $ref: '#/responses/NotFoundError'
-    
-    
+  /project:
+    get:
+      tags: 
+        - Project
+      description: Fetch all projects
+      responses: 
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'
+

@@ -1,10 +1,11 @@
 const Router = require('express').Router;
 const router = new Router();
-
-const user = require('./model/user/router');
 const pkg = require('./package.json')
 
-const routes = [user];
+const user = require('./model/user/router');
+const project = require('./model/project/router')
+
+const routes = [user, project];
 const startDate = new Date();
 
 router.get('/', (req, res) => {
