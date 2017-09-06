@@ -14,9 +14,9 @@ router.route('/me')
   .put(controller.updatePrincipal.bind(controller));
 
 router.route('/:id')
-  .put((...args) => controller.update(...args))
-  .get((...args) => controller.findById(...args))
-  .delete((...args) => controller.remove(...args));
+  .put(jwtRoles.check('ADMIN'), (...args) => controller.update(...args))
+  .get(jwtRoles.check('ADMIN'), (...args) => controller.findById(...args))
+  .delete(jwtRoles.check('ADMIN'), (...args) => controller.remove(...args));
 
 router.post('/login', (...args) => controller.authenticate(...args));
 

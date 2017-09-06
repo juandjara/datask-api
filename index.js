@@ -30,7 +30,11 @@ app.use(jwt({secret: 'mega_token_secret'}).unless({path: jwtWhitelist}));
 app.use('/', routes);
 
 app.use((err, req, res, next) => {
-  console.error(err)
+  if (config.environment === 'dev') {
+    console.error(err)
+  } else {
+    console.error(err.message)
+  }
   let status = err.status || 500
   if (err.isBoom) {
     status = err.output.statusCode
