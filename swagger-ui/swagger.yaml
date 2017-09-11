@@ -113,6 +113,32 @@ definitions:
     properties:
       name:
         type: string
+      completedEstimated:
+        type: integer
+        minimum: 0
+        maximum: 100
+      status:
+        type: string
+        enum: 
+          - ACTIVED
+          - PAUSED
+          - FINISHED
+      budget:
+        type: object
+        properties:
+          ownAmount:
+            type: number
+          hours:
+            type: number
+          billingDate:
+            type: string
+            format: date-time
+          startDate:
+            type: string
+            format: date-time
+          endDate:
+            type: string
+            format: date-time
 paths:
   /user:
     get:
