@@ -8,9 +8,11 @@ tags:
   - name: User
     description: Authentication and user data
   - name: Project
-    description: A project contains tasks and a list of members
+    description: A project contains many groups of tasks and a list of members
   - name: Company
     description: A company represents a group of users or an external contact
+  - name: Panel
+    description: A panel contains a group of tasks
 
 host: localhost:8080
 
@@ -168,6 +170,25 @@ definitions:
         enum:
           - INTERNAL
           - CONTACT
+  Panel:
+    type: object
+    title: Panel
+    required:
+      - name
+    properties:
+      name: 
+        type: string
+      hidden:
+        type: boolean
+      orderPosition:
+        type: integer
+        min: 0
+      defaultTaskStatus:
+        type: string
+        enum: 
+          - PENDING
+          - ACTIVE
+          - COMPLETED
 
 paths:
   /user:
@@ -536,6 +557,111 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/Company'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'
+  /panel:
+    get:
+      tags: 
+        - Panel
+      parameters:
+        - name: page
+          in: query
+          type: integer
+        - name: limit
+          in: query
+          type: integer
+      description: Fetch all companies
+      responses: 
+        200:
+          description: OK
+          schema:
+            allOf:
+              - properties:
+                  docs:
+                    type: array
+                    items:
+                      $ref: '#/definitions/Panel'
+              - $ref: '#/definitions/Page'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'
+    post:
+      tags:
+        - Panel
+      description: Create a new Panel
+      parameters: 
+        - name: Panel
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Panel'
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'
+  /panel/{id}:
+    get:
+      tags:
+        - Panel
+      description: Get Panel by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the Panel to fetch
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Panel'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'   
+    put:
+      tags:
+        - Panel
+      description: Edit a Panel
+      parameters: 
+        - name: Panel
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Panel'
+        - name: id
+          in: path
+          required: true
+          description: The id of the Panel to edit
+          type: string
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'
+    delete:
+      tags:
+        - Panel
+      description: Delete Panel by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the Panel to delete
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Panel'
         401:
           $ref: '#/responses/UnauthorizedError'
         403:
