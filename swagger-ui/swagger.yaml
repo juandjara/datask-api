@@ -54,7 +54,7 @@ definitions:
       name:
         type: string
   Page:
-    type: obect
+    type: object
     title: Page
     properties:
       total:
