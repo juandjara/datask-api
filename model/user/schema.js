@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 const uniqueValidator = require('mongoose-unique-validator');
 const hiddenFields = require('mongoose-hidden')({ defaultHidden: {} })
+const mongoosePaginate = require('mongoose-paginate')
 
 const userSchema = new Schema({
   full_name: {
@@ -38,6 +39,7 @@ const userSchema = new Schema({
 
 userSchema.plugin(uniqueValidator)
 userSchema.plugin(hiddenFields)
+userSchema.plugin(mongoosePaginate)
 
 userSchema.methods.comparePassword = function(password) {
   return bcrypt.compareSync(password, this.password);

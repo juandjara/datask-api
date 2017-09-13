@@ -6,7 +6,7 @@ const jwtRoles = require('express-jwt-permissions')({
 })
 
 router.route('/')
-  .get(jwtRoles.check('ADMIN'), (...args) => controller.find(...args))
+  .get(jwtRoles.check('ADMIN'), (...args) => controller.paginate(...args))
   .post(jwtRoles.check('ADMIN'), (...args) => controller.register(...args));
 
 router.route('/me')
