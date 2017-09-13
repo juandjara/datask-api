@@ -53,6 +53,18 @@ definitions:
         type: number
       name:
         type: string
+  Page:
+    type: obect
+    title: Page
+    properties:
+      total:
+        type: integer
+      limit:
+        type: integer
+      page:
+        type: integer
+      pages:
+        type: integer
   UserFromDB:
     type: object
     title: UserFromDB
@@ -145,13 +157,24 @@ paths:
       tags:
         - User
       description: Fetch all users
+      parameters:
+        - name: page
+          in: query
+          type: integer
+        - name: limit
+          in: query
+          type: integer
       responses:
         200:
           description: Get a list of all users in the system
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/UserFromDB'
+            allOf:
+              - properties:
+                  docs:
+                    type: array
+                    items:
+                      $ref: '#/definitions/UserFromDB'
+              - $ref: '#/definitions/Page'
         401:
           $ref: '#/responses/UnauthorizedError'
         403:
@@ -293,14 +316,25 @@ paths:
     get:
       tags: 
         - Project
+      parameters:
+        - name: page
+          in: query
+          type: integer
+        - name: limit
+          in: query
+          type: integer
       description: Fetch all projects
       responses: 
         200:
           description: OK
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/Project'
+            allOf:
+              - properties:
+                  docs:
+                    type: array
+                    items:
+                      $ref: '#/definitions/Project'
+              - $ref: '#/definitions/Page'
         401:
           $ref: '#/responses/UnauthorizedError'
         403:
