@@ -18,21 +18,11 @@ const projectSchema = new Schema({
     enum: ['ACTIVED', 'PAUSED', 'FINISHED']
   },
   budget: {
-    ownAmount: {
-      type: Number
-    },
-    hours: {
-      type: Number
-    },
-    billingDate: {
-      type: Date
-    },
-    startDate: {
-      type: Date
-    },
-    endDate: {
-      type: Date
-    }
+    ownAmount: Number,
+    hours: Number,
+    billingDate: Date,
+    startDate: Date,
+    endDate: Date
   }
 });
 

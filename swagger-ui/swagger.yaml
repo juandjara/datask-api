@@ -9,6 +9,8 @@ tags:
     description: Authentication and user data
   - name: Project
     description: A project contains tasks and a list of members
+  - name: Company
+    description: A company represents a group of users or an external contact
 
 host: localhost:8080
 
@@ -151,6 +153,22 @@ definitions:
           endDate:
             type: string
             format: date-time
+  Company:
+    type: object
+    title: Company
+    required:
+      - name
+    properties:
+      name:
+        type: string
+      address:
+        type: string
+      type:
+        type: string
+        enum:
+          - INTERNAL
+          - CONTACT
+
 paths:
   /user:
     get:
@@ -416,4 +434,109 @@ paths:
         401:
           $ref: '#/responses/UnauthorizedError'
         403:
+          $ref: '#/responses/PermissionError'
+  /company:
+    get:
+      tags: 
+        - Company
+      parameters:
+        - name: page
+          in: query
+          type: integer
+        - name: limit
+          in: query
+          type: integer
+      description: Fetch all companies
+      responses: 
+        200:
+          description: OK
+          schema:
+            allOf:
+              - properties:
+                  docs:
+                    type: array
+                    items:
+                      $ref: '#/definitions/Company'
+              - $ref: '#/definitions/Page'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'
+    post:
+      tags:
+        - Company
+      description: Create a new company
+      parameters: 
+        - name: company
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Company'
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'
+  /company/{id}:
+    get:
+      tags:
+        - Company
+      description: Get Company by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the Company to fetch
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Company'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
           $ref: '#/responses/PermissionError'   
+    put:
+      tags:
+        - Company
+      description: Edit a Company
+      parameters: 
+        - name: Company
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Company'
+        - name: id
+          in: path
+          required: true
+          description: The id of the Company to edit
+          type: string
+      responses:
+        200:
+          description: OK
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'
+    delete:
+      tags:
+        - Company
+      description: Delete Company by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the Company to delete
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Company'
+        401:
+          $ref: '#/responses/UnauthorizedError'
+        403:
+          $ref: '#/responses/PermissionError'
