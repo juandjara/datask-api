@@ -38,6 +38,10 @@ const userSchema = new Schema({
   activated: {
     type: Boolean,
     default: true
+  },
+  type: {
+    type: String,
+    enum: ["INTERNAL", "CONTACT"]
   }
 });
 
