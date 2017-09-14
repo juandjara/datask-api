@@ -98,11 +98,6 @@ definitions:
       activated:
         type: boolean
         default: true
-      type:
-        type: string
-        enum:
-          - INTERNAL
-          - CONTACT
       company:
         $ref: '#/definitions/Company'
   UserFromClient:
@@ -134,11 +129,6 @@ definitions:
       activated:
         type: boolean
         default: true
-      type:
-        type: string
-        enum:
-          - INTERNAL
-          - CONTACT
       company:
         $ref: '#/definitions/Company'
   Project:

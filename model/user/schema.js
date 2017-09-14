@@ -39,10 +39,6 @@ const userSchema = new Schema({
     type: Boolean,
     default: true
   },
-  type: {
-    type: String,
-    enum: ["INTERNAL", "CONTACT"]
-  },
   company: {
     type: Schema.Types.ObjectId,
     ref: 'Company'
