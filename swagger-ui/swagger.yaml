@@ -61,14 +61,18 @@ definitions:
     type: object
     title: Page
     properties:
-      total:
-        type: integer
-      limit:
+      size:
         type: integer
       page:
         type: integer
-      pages:
+      totalPages:
         type: integer
+      totalElements:
+        type: integer
+      first:
+        type: boolean
+      last: 
+        type: boolean
   UserFromDB:
     type: object
     title: UserFromDB
