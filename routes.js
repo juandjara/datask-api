@@ -4,12 +4,15 @@ const pkg = require('./package.json')
 
 const user = require('./model/user/router');
 const project = require('./model/project/router')
+const company = require('./model/company/router')
+const panel = require('./model/panel/router')
 
-const routes = [user, project];
+
+const routes = [user, project, company, panel];
 const startDate = new Date();
 
 router.get('/', (req, res) => {
-  const links = ['/swagger-ui'].concat(routes.map(route => route.endpoint))
+  const links = ['/swagger-ui', ...routes.map(route => route.endpoint)]
   const info = {
     links,
     name: pkg.name,
