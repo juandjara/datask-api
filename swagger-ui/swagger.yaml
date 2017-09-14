@@ -95,6 +95,16 @@ definitions:
             - DEVELOPER
             - ADMIN
             - CUSTOMER
+      activated:
+        type: boolean
+        default: true
+      type:
+        type: string
+        enum:
+          - INTERNAL
+          - CONTACT
+      company:
+        $ref: '#/definitions/Company'
   UserFromClient:
     type: object
     title: UserFromClient
@@ -121,6 +131,16 @@ definitions:
             - DEVELOPER
             - ADMIN
             - CUSTOMER
+      activated:
+        type: boolean
+        default: true
+      type:
+        type: string
+        enum:
+          - INTERNAL
+          - CONTACT
+      company:
+        $ref: '#/definitions/Company'
   Project:
     type: object
     title: Project
@@ -182,7 +202,7 @@ definitions:
         type: boolean
       orderPosition:
         type: integer
-        min: 0
+        minimum: 0
       defaultTaskStatus:
         type: string
         enum: 

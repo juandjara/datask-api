@@ -42,6 +42,10 @@ const userSchema = new Schema({
   type: {
     type: String,
     enum: ["INTERNAL", "CONTACT"]
+  },
+  company: {
+    type: Schema.Types.ObjectId,
+    ref: 'Company'
   }
 });
 
