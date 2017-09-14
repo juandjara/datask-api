@@ -14,7 +14,9 @@ class UserController extends Controller {
   authenticate(req, res, next) {
     this.facade.findOneWithPassword({ email: req.body.email })
       .then((user) => {
-        if (!user || !user.comparePassword(req.body.password)) {
+        if (!user ||
+            !user.activated ||
+            !user.comparePassword(req.body.password)) {
           return next(boom.unauthorized('Wrong credentials'))
         }
         const {email, full_name, roles, _id} = user

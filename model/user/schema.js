@@ -34,6 +34,10 @@ const userSchema = new Schema({
     ],
     default: ["DEVELOPER"],
     required: true
+  },
+  activated: {
+    type: Boolean,
+    default: true
   }
 });
 
