@@ -247,7 +247,7 @@ paths:
           $ref: '#/responses/UnauthorizedError'
         403:
           $ref: '#/responses/UnauthorizedError'
-  /user/login:
+  /user/authenticate:
     post:
       tags:
         - User

@@ -18,7 +18,7 @@ router.route('/:id')
   .get(jwtRoles.check('ADMIN'), (...args) => controller.findById(...args))
   .delete(jwtRoles.check('ADMIN'), (...args) => controller.remove(...args));
 
-router.post('/login', (...args) => controller.authenticate(...args));
+router.post('/authenticate', (...args) => controller.authenticate(...args));
 
 router.endpoint = '/user';
 

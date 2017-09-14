@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 app.use(morgan('tiny'));
 app.use('/swagger-ui', express.static('swagger-ui'))
 
-const jwtWhitelist = ['/', '/user/login'];
+const jwtWhitelist = ['/', '/user/authenticate'];
 
 app.use(jwt({secret: 'mega_token_secret'}).unless({path: jwtWhitelist}));
 app.use('/', routes);

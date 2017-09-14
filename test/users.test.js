@@ -37,7 +37,7 @@ test.before(async () => {
 
 const login = async (user, pass) => {
   const res = await request(app)
-    .post('/user/login')
+    .post('/user/authenticate')
     .send({email: user, password: pass})
 
   return {res, token: res.body.token}
