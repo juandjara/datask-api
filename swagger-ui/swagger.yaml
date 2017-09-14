@@ -487,6 +487,9 @@ paths:
         - name: limit
           in: query
           type: integer
+        - name: sort
+          in: query
+          type: string
       description: Fetch all companies
       responses: 
         200:
