@@ -12,6 +12,7 @@ class CompanyFacade extends Facade {
     return this.Schema
       .findById(...args)
       .populate('users')
+      .populate('projects')
       .exec();
   }
 }

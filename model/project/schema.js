@@ -23,6 +23,10 @@ const projectSchema = new Schema({
     billingDate: Date,
     startDate: Date,
     endDate: Date
+  },
+  company: {
+    type: Schema.Types.ObjectId,
+    ref: 'Company'
   }
 });
 
