@@ -6,10 +6,14 @@ const hiddenFields = require('mongoose-hidden')({ defaultHidden: {} })
 const mongoosePaginate = require('mongoose-paginate')
 
 const userSchema = new Schema({
-  full_name: {
+  name: {
     type: String,
     trim: true,
     required: true
+  },
+  surname: {
+    type: String,
+    trim: true
   },
   email: {
     type: String,
@@ -52,6 +56,11 @@ userSchema.plugin(mongoosePaginate)
 userSchema.methods.comparePassword = function(password) {
   return bcrypt.compareSync(password, this.password);
 };
+
+userSchema.virtual('full_name').get(function() {
+  return this.name + this.surname
+})
+userSchema.set('toJSON', {virtuals: true})
 
 userSchema.pre('save', function(next) {
   const user = this
