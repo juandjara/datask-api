@@ -7,7 +7,8 @@ const config = {
   },
   mongo: {
     url: process.env.MONGO_DB_URI || 'mongodb://localhost/generated-express-api'
-  }
+  },
+  secret: 'mega_token_secret'
 };
 
 module.exports = config;

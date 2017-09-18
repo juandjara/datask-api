@@ -26,7 +26,7 @@ app.use('/swagger-ui', express.static('swagger-ui'))
 
 const jwtWhitelist = ['/', '/user/authenticate'];
 
-app.use(jwt({secret: 'mega_token_secret'}).unless({path: jwtWhitelist}));
+app.use(jwt({secret: config.secret}).unless({path: jwtWhitelist}));
 app.use('/', routes);
 
 app.use((err, req, res, next) => {

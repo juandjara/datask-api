@@ -2,6 +2,7 @@ const Controller = require('../../lib/controller');
 const userFacade = require('./facade');
 const jwt = require('jsonwebtoken');
 const boom = require('boom');
+const {secret} = require('../../config')
 
 class UserController extends Controller {
   register(req, res, next) {
@@ -21,7 +22,7 @@ class UserController extends Controller {
         }
         const {email, full_name, roles, _id} = user
         const payload = {email, full_name, roles, _id}
-        const token = jwt.sign(payload, 'mega_token_secret', {expiresIn: '1d'});
+        const token = jwt.sign(payload, secret, {expiresIn: '1d'});
         res.json({ token });
       })
       .catch(next);
