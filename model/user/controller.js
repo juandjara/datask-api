@@ -1,3 +1,4 @@
+/* eslint camelcase:0 */
 const Controller = require('../../lib/controller');
 const userFacade = require('./facade');
 const jwt = require('jsonwebtoken');
@@ -6,6 +7,10 @@ const {secret} = require('../../config')
 
 class UserController extends Controller {
   register(req, res, next) {
+    const {password = "", repeat_password = ""} = req.body
+    if (password.trim() !== repeat_password.trim()) {
+      next(boom.badRequest('Passwords must match'))
+    }
     this.facade.create(req.body)
       .then((user) => {
         res.status(201).json(user);
