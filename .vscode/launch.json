@@ -7,6 +7,12 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Launch Program",
+      "program": "${workspaceRoot}/index.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Run AVA test",
       "program": "${workspaceRoot}/node_modules/ava/profile.js",
       "args": [

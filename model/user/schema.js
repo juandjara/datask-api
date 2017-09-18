@@ -47,7 +47,7 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Company'
   }
-});
+}, {id: false, toJSON: {virtuals: true}});
 
 userSchema.plugin(uniqueValidator)
 userSchema.plugin(hiddenFields)
@@ -60,7 +60,6 @@ userSchema.methods.comparePassword = function(password) {
 userSchema.virtual('full_name').get(function() {
   return this.name + this.surname
 })
-userSchema.set('toJSON', {virtuals: true})
 
 userSchema.pre('save', function(next) {
   const user = this
