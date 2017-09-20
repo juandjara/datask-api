@@ -7,15 +7,19 @@ const {secret} = require('../../config')
 
 class UserController extends Controller {
   register(req, res, next) {
-    const {password = "", repeat_password = ""} = req.body
-    if (password.trim() !== repeat_password.trim()) {
-      next(boom.badRequest('Passwords must match'))
-    }
     this.facade.create(req.body)
       .then((user) => {
         res.status(201).json(user);
       })
       .catch(next);
+  }
+  checkPasswordRepeat(req, res, next) {
+    const {password = "", repeat_password = ""} = req.body
+    if (password.trim() !== repeat_password.trim()) {
+      next(boom.badRequest('Passwords must match'))
+      return
+    }
+    next()
   }
   authenticate(req, res, next) {
     this.facade.findOneWithPassword({ email: req.body.email })
