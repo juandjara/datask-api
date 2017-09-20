@@ -15,7 +15,7 @@ const projectSchema = new Schema({
   status: {
     type: String,
     required: true,
-    enum: ['ACTIVED', 'PAUSED', 'FINISHED']
+    enum: ['ACTIVE', 'PAUSED', 'FINISHED']
   },
   budget: {
     ownAmount: Number,
