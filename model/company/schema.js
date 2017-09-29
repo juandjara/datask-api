@@ -22,8 +22,6 @@ const companySchema = new Schema({
   }]
 });
 
-companySchema.index({name: 'text'})
-
 companySchema.plugin(mongoosePaginate)
 
 module.exports = mongoose.model('Company', companySchema);
