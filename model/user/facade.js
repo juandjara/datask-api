@@ -17,7 +17,7 @@ class UserFacade extends Facade {
     }
     return this.Schema
       .findById(...args)
-      .populate('company')
+      .populate('company', 'name _id')
       .exec();
   }
 }
