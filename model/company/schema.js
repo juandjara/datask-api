@@ -11,15 +11,7 @@ const companySchema = new Schema({
   type: {
     type: String,
     enum: ["INTERNAL", "CONTACT"]
-  },
-  users: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  projects: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Project'
-  }]
+  }
 });
 
 companySchema.plugin(mongoosePaginate)
