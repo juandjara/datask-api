@@ -11,6 +11,9 @@ router.route('/:id')
   .get((...args) => controller.findById(...args))
   .delete((...args) => controller.remove(...args));
 
+router.route('/company/:companyId')
+  .get((...args) => controller.findByCompanyId(...args))
+
 router.endpoint = "/project"
 
 module.exports = router;
