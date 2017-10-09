@@ -27,7 +27,15 @@ const projectSchema = new Schema({
   company: {
     type: Schema.Types.ObjectId,
     ref: 'Company'
-  }
+  },
+  manager: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  users: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }]
 });
 
 projectSchema.plugin(mongoosePaginate)
