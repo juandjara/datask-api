@@ -58,7 +58,7 @@ userSchema.methods.comparePassword = function(password) {
 };
 
 userSchema.virtual('full_name').get(function() {
-  const {name, surname} = this
+  const {name = "", surname = ""} = this
   return `${name} ${surname}`
 })
 

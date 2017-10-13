@@ -42,11 +42,14 @@ class ProjectController extends Controller {
     .catch(next)
   }
   userIsManager(req, res, next) {
+    if (req.user.roles.indexOf("ADMIN") !== -1) {
+      next()
+    }
     const userId = req.user._id
     const projectId = req.params.id
     this.facade.findById(projectId)
     .then(project => {
-      if (project.manager === userId) {
+      if (project.manager._id.toString() === userId) {
         next()
         return
       }
