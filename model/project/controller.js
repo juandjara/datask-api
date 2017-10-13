@@ -41,6 +41,19 @@ class ProjectController extends Controller {
     .then(savedProject => res.json(savedProject))
     .catch(next)
   }
+  userIsManager(req, res, next) {
+    const userId = req.user._id
+    const projectId = req.params.id
+    this.facade.findById(projectId)
+    .then(project => {
+      if (project.manager === userId) {
+        next()
+        return
+      }
+      next(boom.forbidden('You must be the manager of the project to perform this action'))
+    })
+    .catch(next)
+  }
 }
 
 module.exports = new ProjectController(projectFacade);

@@ -6,25 +6,25 @@ const jwtRoles = require('express-jwt-permissions')({
 })
 
 const checkPasswordRepeat = controller.checkPasswordRepeat.bind(controller)
+const checkAdmin = jwtRoles.check('ADMIN')
 
-router.route('/')
-  .get(jwtRoles.check('ADMIN'), (...args) => controller.paginate(...args))
-  .post(jwtRoles.check('ADMIN'),
-        checkPasswordRepeat,
-        (...args) => controller.register(...args));
+router.post('/authenticate', (...args) => controller.authenticate(...args));
 
 router.route('/me')
   .get((...args) => controller.getPrincipal(...args))
   .put(checkPasswordRepeat, (...args) => controller.updatePrincipal(...args));
 
-router.route('/:id')
-  .put(jwtRoles.check('ADMIN'),
-       checkPasswordRepeat,
-       (...args) => controller.update(...args))
-  .get(jwtRoles.check('ADMIN'), (...args) => controller.findById(...args))
-  .delete(jwtRoles.check('ADMIN'), (...args) => controller.remove(...args));
+router.use(checkAdmin)
 
-router.post('/authenticate', (...args) => controller.authenticate(...args));
+router.route('/')
+  .get((...args) => controller.paginate(...args))
+  .post(checkPasswordRepeat, (...args) => controller.register(...args));
+
+router.route('/:id')
+  .put(checkPasswordRepeat, (...args) => controller.update(...args))
+  .get((...args) => controller.findById(...args))
+  .delete((...args) => controller.remove(...args));
+
 
 router.endpoint = '/user';
 
