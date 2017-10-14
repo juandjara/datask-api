@@ -14,16 +14,14 @@ router.route('/me')
   .get((...args) => controller.getPrincipal(...args))
   .put(checkPasswordRepeat, (...args) => controller.updatePrincipal(...args));
 
-router.use(checkAdmin)
-
 router.route('/')
   .get((...args) => controller.paginate(...args))
-  .post(checkPasswordRepeat, (...args) => controller.register(...args));
+  .post(checkAdmin, checkPasswordRepeat, (...args) => controller.register(...args));
 
 router.route('/:id')
-  .put(checkPasswordRepeat, (...args) => controller.update(...args))
   .get((...args) => controller.findById(...args))
-  .delete((...args) => controller.remove(...args));
+  .put(checkAdmin, checkPasswordRepeat, (...args) => controller.update(...args))
+  .delete(checkAdmin, (...args) => controller.remove(...args));
 
 
 router.endpoint = '/user';
