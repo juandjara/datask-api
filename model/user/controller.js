@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const boom = require('boom');
 const {secret} = require('../../config')
 
+const updateBlacklist = ['activated', 'roles']
+
 class UserController extends Controller {
   register(req, res, next) {
     this.facade.create(req.body)
@@ -49,7 +51,11 @@ class UserController extends Controller {
   }
   updatePrincipal(req, res, next) {
     const userId = req.user._id;
-    this.facade.findByIdAndUpdate(userId, req.body)
+    const user = req.body;
+    updateBlacklist.forEach(key => {
+      delete user[key]
+    })
+    this.facade.findByIdAndUpdate(userId, user)
       .then(user => res.json(user))
       .catch(next)
   }
