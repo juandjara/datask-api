@@ -19,8 +19,8 @@ app.set('json spaces', 2);
 
 app.use(cors());
 app.use(helmet());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
+app.use(bodyParser.json({limit: '10mb'}));
 app.use(morgan('tiny'));
 app.use('/swagger-ui', express.static('swagger-ui'))
 
