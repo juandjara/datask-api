@@ -11,13 +11,13 @@ const createTestUsers = async () => {
   const admin = new User({
     email: 'admin',
     password: 'admin',
-    full_name: 'admin',
+    name: 'admin',
     roles: ["ADMIN"]
   })
   await admin.save()
   const dev = new User({
     email: 'dev',
-    full_name: 'dev',
+    name: 'dev',
     password: 'dev',
     roles: ["DEVELOPER"]
   })
@@ -65,7 +65,7 @@ test(
     const user = await getMyself(token)
 
     t.is(user.email, 'admin')
-    t.is(user.full_name, 'admin')
+    t.is(user.name, 'admin')
     t.true(Array.isArray(user.roles))
     t.is(user.roles[0], 'ADMIN')
     t.true(isValidISODateString(user.created_at))
@@ -82,7 +82,7 @@ test(
       .set('Authorization', `Bearer ${token}`)
 
     t.is(res.status, 200)
-    const users = res.body
+    const users = res.body.docs
     t.true(Array.isArray(users))
     t.is(typeof users[0], 'object')
 
@@ -91,15 +91,20 @@ test(
   }
 )
 test(
-  'developer should not be able to list all users',
+  'developer should be able to list all users',
   async t => {
     const {token} = await login('dev', 'dev')
     const res = await request(app)
       .get('/user')
       .set('Authorization', `Bearer ${token}`)
 
-    t.is(res.status, 403)
-    t.is(res.body.error, 'Permission denied')
+    t.is(res.status, 200)
+    const users = res.body.docs
+    t.true(Array.isArray(users))
+    t.is(typeof users[0], 'object')
+
+    t.is(users[0].email, 'admin')
+    t.is(users[1].email, 'dev')
   }
 )
 
@@ -126,8 +131,9 @@ test(
     const {token} = await login('admin', 'admin')
     const newUser = {
       email: 'user 3',
-      password: 'user 3',
-      full_name: 'user 3'
+      password: 'user',
+      repeat_password: 'user',
+      name: 'user 3'
     }
     const res = await request(app)
       .post('/user')
@@ -140,7 +146,7 @@ test(
     t.is(typeof user, 'object')
     t.is(typeof user._id, 'string')
     t.is(user.email, newUser.email)
-    t.is(user.full_name, newUser.full_name)
+    t.is(user.name, newUser.name)
     t.true(isValidISODateString(user.created_at))
     t.falsy(user.password)
   }
@@ -153,7 +159,7 @@ test(
     const newUser = {
       email: 'user 3',
       password: 'user 3',
-      full_name: 'user 3'
+      name: 'user 3'
     }
     const res = await request(app)
       .post('/user')
@@ -180,7 +186,7 @@ test(
   }
 )
 test(
-  'developer should not be able to get any user by id',
+  'developer should be able to get any user by id',
   async t => {
     const {token} = await login('dev', 'dev')
     const user = await User.find({email: 'dev'}).exec()
@@ -189,8 +195,8 @@ test(
       .get(`/user/${user[0]._id}`)
       .set('Authorization', `Bearer ${token}`)
 
-    t.is(res.status, 403)
-    t.is(res.body.error, 'Permission denied')
+    t.is(res.status, 200)
+    t.is(res.body.email, 'dev')
   }
 )
 
@@ -203,11 +209,11 @@ test(
     const res = await request(app)
       .put(`/user/${user[0]._id}`)
       .set('Authorization', `Bearer ${token}`)
-      .send({full_name: 'dev edited'})
+      .send({name: 'dev edited'})
 
     t.is(res.status, 200)
-    t.not(user.full_name, res.body.full_name)
-    t.is(res.body.full_name, 'dev edited')
+    t.not(user.name, res.body.name)
+    t.is(res.body.name, 'dev edited')
   }
 )
 test(
@@ -219,7 +225,7 @@ test(
     const res = await request(app)
       .put(`/user/${user[0]._id}`)
       .set('Authorization', `Bearer ${token}`)
-      .send({full_name: 'dev edited'})
+      .send({name: 'dev edited'})
 
     t.is(res.status, 403)
     t.is(res.body.error, 'Permission denied')
