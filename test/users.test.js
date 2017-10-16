@@ -4,7 +4,9 @@ import MongodbMemoryServer from 'mongodb-memory-server'
 import mongoose from 'mongoose'
 import User from '../model/user/schema'
 
-let app
+mongoose.Promise = global.Promise
+process.env.NODE_ENV = 'test'
+const app = require('../server')
 const mongod = new MongodbMemoryServer()
 
 export const createTestUsers = async () => {
@@ -22,6 +24,13 @@ export const createTestUsers = async () => {
     roles: ["DEVELOPER"]
   })
   await dev.save()
+  const dev2 = new User({
+    email: 'dev2',
+    name: 'dev2',
+    password: 'dev2',
+    roles: ["DEVELOPER"]
+  })
+  await dev2.save()
 }
 export const login = async (user, pass) => {
   const res = await request(app)
@@ -33,16 +42,12 @@ export const login = async (user, pass) => {
 
 test.before(async () => {
   const uri = await mongod.getConnectionString();
-  process.env.MONGO_DB_URI = uri
-  process.env.NODE_ENV = 'test'
-
-  app = require('../index')
-
   await mongoose.connect(uri, {useMongoClient: true});
   await createTestUsers()
-});
-test.afterEach.always(() => {
-  User.remove({})
+})
+test.after(() => {
+  mongod.stop()
+  mongoose.disconnect()
 })
 
 const getMyself = async (token) => {
@@ -207,16 +212,17 @@ test(
   'admin should be able to edit any user by id',
   async t => {
     const {token} = await login('admin', 'admin')
-    const user = await User.find({email: 'dev'}).exec()
+    const user = await User.find({email: 'dev2'})
+    const id = user[0]._id.toString()
 
     const res = await request(app)
-      .put(`/user/${user[0]._id}`)
+      .put(`/user/${id}`)
       .set('Authorization', `Bearer ${token}`)
-      .send({name: 'dev edited'})
+      .send({name: 'edited'})
 
     t.is(res.status, 200)
     t.not(user.name, res.body.name)
-    t.is(res.body.name, 'dev edited')
+    t.is(res.body.name, 'edited')
   }
 )
 test(
