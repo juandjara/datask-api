@@ -9,7 +9,7 @@ process.env.NODE_ENV = 'test'
 const app = require('../server')
 const mongod = new MongodbMemoryServer()
 
-export const createTestUsers = async () => {
+const createTestUsers = async () => {
   const admin = new User({
     email: 'admin',
     password: 'admin',
@@ -32,7 +32,7 @@ export const createTestUsers = async () => {
   })
   await dev2.save()
 }
-export const login = async (user, pass) => {
+const login = async (user, pass) => {
   const res = await request(app)
     .post('/user/authenticate')
     .send({email: user, password: pass})
