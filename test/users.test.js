@@ -7,7 +7,7 @@ import User from '../model/user/schema'
 let app
 const mongod = new MongodbMemoryServer()
 
-const createTestUsers = async () => {
+export const createTestUsers = async () => {
   const admin = new User({
     email: 'admin',
     password: 'admin',
@@ -23,6 +23,13 @@ const createTestUsers = async () => {
   })
   await dev.save()
 }
+export const login = async (user, pass) => {
+  const res = await request(app)
+    .post('/user/authenticate')
+    .send({email: user, password: pass})
+
+  return {res, token: res.body.token}
+}
 
 test.before(async () => {
   const uri = await mongod.getConnectionString();
@@ -34,14 +41,10 @@ test.before(async () => {
   await mongoose.connect(uri, {useMongoClient: true});
   await createTestUsers()
 });
+test.afterEach.always(() => {
+  User.remove({})
+})
 
-const login = async (user, pass) => {
-  const res = await request(app)
-    .post('/user/authenticate')
-    .send({email: user, password: pass})
-
-  return {res, token: res.body.token}
-}
 const getMyself = async (token) => {
   const userRes = await request(app)
     .get('/user/me')
@@ -258,7 +261,3 @@ test(
     t.is(res.status, 403)
   }
 )
-
-test.afterEach.always(() => {
-  User.remove({})
-})
