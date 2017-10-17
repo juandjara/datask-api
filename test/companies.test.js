@@ -58,8 +58,11 @@ test(
       .get('/company')
       .set('Authorization', `Bearer ${token}`)
 
+    const companies = res.body.docs
     t.is(res.status, 200)
-    t.true(Array.isArray(res.body.docs))
+    t.true(Array.isArray(companies))
+    t.is(typeof companies[0], 'object')
+    t.is(companies[0].name, 'ACME')
   }
 )
 test(
@@ -77,6 +80,7 @@ test(
     t.is(companies[0].name, 'ACME')
   }
 )
+
 test.todo('admin should be able to get a company by id')
 test.todo('developer should be able to get a company by id')
 test.todo('admin should be able to create a new company')
@@ -85,4 +89,3 @@ test.todo('admin should be able to edit a company')
 test.todo('developer should not be able to edit a company')
 test.todo('admin should be able to delete a company')
 test.todo('developer should not be able to delete a company')
-
