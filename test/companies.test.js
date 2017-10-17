@@ -80,9 +80,29 @@ test(
     t.is(companies[0].name, 'ACME')
   }
 )
+test('admin should be able to get a company by id', async t => {
+  const {token} = await login('admin', 'admin')
+  const acme = await Company.find({name: 'ACME'}).exec()
 
-test.todo('admin should be able to get a company by id')
-test.todo('developer should be able to get a company by id')
+  const res = await request(app)
+    .get(`/company/${acme[0]._id}`)
+    .set('Authorization', `Bearer ${token}`)
+
+  t.is(res.status, 200)
+  t.is(res.body.name, 'ACME')
+})
+test('developer should be able to get a company by id', async t => {
+  const {token} = await login('dev', 'dev')
+  const acme = await Company.find({name: 'ACME'}).exec()
+
+  const res = await request(app)
+    .get(`/company/${acme[0]._id}`)
+    .set('Authorization', `Bearer ${token}`)
+
+  t.is(res.status, 200)
+  t.is(res.body.name, 'ACME')
+})
+
 test.todo('admin should be able to create a new company')
 test.todo('developer should not be able to create a new company')
 test.todo('admin should be able to edit a company')
