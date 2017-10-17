@@ -5,10 +5,8 @@ const pkg = require('./package.json')
 const user = require('./model/user/router');
 const project = require('./model/project/router')
 const company = require('./model/company/router')
-const panel = require('./model/panel/router')
 
-
-const routes = [user, project, company, panel];
+const routes = [user, project, company];
 const startDate = new Date();
 
 router.get('/', (req, res) => {
