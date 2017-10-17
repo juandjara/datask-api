@@ -27,9 +27,11 @@ const createUsers = async () => {
   await dev.save()
 }
 const createProjects = async () => {
+  const user = await User.find({email: 'dev'}).exec()
   const opk = new Project({
     name: "Opileak",
-    status: "ACTIVE"
+    status: "ACTIVE",
+    manager: user._id
   })
   await opk.save()
 }
@@ -85,8 +87,10 @@ test(
 test.todo('admin should be able to get a project by id')
 test.todo('developer should be able to get a project by id')
 test.todo('admin should be able to create a new project')
-test.todo('developer should not be able to create a new project')
+test.todo('developer should be able to create a new project')
 test.todo('admin should be able to edit a project')
+test.todo('manager should be able to edit a project')
 test.todo('developer should not be able to edit a project')
 test.todo('admin should be able to delete a project')
+test.todo('manager should be able to edit a project')
 test.todo('developer should not be able to delete a project')
