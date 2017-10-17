@@ -3,6 +3,7 @@ import request from 'supertest'
 import MongodbMemoryServer from 'mongodb-memory-server'
 import mongoose from 'mongoose'
 import User from '../model/user/schema'
+import Company from '../model/company/schema'
 
 mongoose.Promise = global.Promise
 process.env.NODE_ENV = 'test'
@@ -25,6 +26,12 @@ const createUsers = async () => {
   })
   await dev.save()
 }
+const createCompanies = async () => {
+  const acme = new Company({
+    name: "ACME"
+  })
+  await acme.save()
+}
 const login = async (user, pass) => {
   const res = await request(app)
     .post('/user/authenticate')
@@ -36,6 +43,7 @@ test.before(async () => {
   const uri = await mongod.getConnectionString();
   await mongoose.connect(uri, {useMongoClient: true});
   await createUsers()
+  await createCompanies()
 })
 test.after(() => {
   mongod.stop()
@@ -43,7 +51,7 @@ test.after(() => {
 })
 
 test(
-  'admin should list all companies',
+  'admin should be able to list all companies',
   async t => {
     const {token} = await login('admin', 'admin')
     const res = await request(app)
@@ -55,14 +63,26 @@ test(
   }
 )
 test(
-  'developer should list all companies',
+  'developer should be able to list all companies',
   async t => {
     const {token} = await login('dev', 'dev')
     const res = await request(app)
       .get('/company')
       .set('Authorization', `Bearer ${token}`)
 
+    const companies = res.body.docs
     t.is(res.status, 200)
-    t.true(Array.isArray(res.body.docs))
+    t.true(Array.isArray(companies))
+    t.is(typeof companies[0], 'object')
+    t.is(companies[0].name, 'ACME')
   }
 )
+test.todo('admin should be able to get a company by id')
+test.todo('developer should be able to get a company by id')
+test.todo('admin should be able to create a new company')
+test.todo('developer should not be able to create a new company')
+test.todo('admin should be able to edit a company')
+test.todo('developer should not be able to edit a company')
+test.todo('admin should be able to delete a company')
+test.todo('developer should not be able to delete a company')
+
