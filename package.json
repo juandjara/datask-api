@@ -9,7 +9,8 @@
     "pre-deploy": "node deleteLastDeploy.js",
     "deploy": "npm run pre-deploy && now --dotenv --public",
     "docs": "documentation serve --watch --config jsdoc.conf index.js",
-    "test": "ava"
+    "test": "nyc ava",
+    "test-report": "nyc report --reporter=html"
   },
   "engines": {
     "node": ">=6"
@@ -44,6 +45,7 @@
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.7.1",
     "nodemon": "^1.11.0",
+    "nyc": "^11.2.1",
     "supertest": "^3.0.0"
   }
 }
