@@ -10,9 +10,9 @@ const routes = [user, project, company];
 const startDate = new Date();
 
 router.get('/', (req, res) => {
-  const links = ['/swagger-ui', ...routes.map(route => route.endpoint)]
+  const resources = ['/swagger-ui', ...routes.map(route => route.endpoint)]
   const info = {
-    links,
+    resources,
     name: pkg.name,
     version: pkg.version,
     started_at: startDate,
