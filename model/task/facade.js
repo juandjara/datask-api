@@ -11,7 +11,7 @@ class TaskFacade extends Facade {
     }
     return this.Schema
       .findById(...args)
-      .populate('asignee', 'name _id')
+      .populate('asignee', 'name surname _id')
       .exec();
   }
 }
