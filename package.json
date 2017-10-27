@@ -7,15 +7,19 @@
     "dev": "nodemon index.js",
     "start": "node index.js",
     "pre-deploy": "node deleteLastDeploy.js",
-    "deploy": "npm run pre-deploy && now --dotenv --public",
+    "deploy": "npm run pre-deploy && now --dotenv --public && now alias",
     "docs": "documentation serve --watch --config jsdoc.conf index.js",
     "test": "nyc ava",
     "test-report": "nyc report --reporter=html"
   },
+  "now": {
+    "alias": "datask-api"
+  },
   "engines": {
     "node": ">=6"
   },
-  "author": "juandjara <>",
+  "license": "MIT",
+  "author": "juandjara <juandjara.com>",
   "dependencies": {
     "bcrypt": "^1.0.3",
     "bluebird": "^3.4.6",
