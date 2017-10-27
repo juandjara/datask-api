@@ -1,6 +1,11 @@
 const controller = require('./controller');
 const Router = require('express').Router;
 const router = new Router();
+const projectController = require('../project/controller')
+
+const checkPermission = projectController.userIsManager.bind(projectController)
+
+router.use(checkPermission)
 
 router.route('/:projectId')
   .get((...args) => controller.paginate(...args))
