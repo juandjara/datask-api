@@ -13,7 +13,8 @@
     "test-report": "nyc report --reporter=html"
   },
   "now": {
-    "alias": "datask-api"
+    "alias": "datask-api",
+    "type": "npm"
   },
   "engines": {
     "node": ">=6"
