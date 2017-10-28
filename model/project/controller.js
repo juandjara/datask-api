@@ -6,18 +6,10 @@ class ProjectController extends Controller {
   findByCompanyId(req, res, next) {
     const {sort, page = 0, size = 5} = req.query
     const {companyId} = req.params
-    if (parseInt(page) < 0) {
-      return next(boom.badRequest('Page number must be 0 or greater'))
-    }
     const query = {
       company: companyId
     }
-    return this.facade.paginate(query, {
-      sort,
-      page: parseInt(page) + 1,
-      limit: parseInt(size)
-    })
-    .then(pageData => this.facade.mapPageData(pageData))
+    return this.facade.paginate(page, size, sort, query)
     .then(pageDataMapped => res.json(pageDataMapped))
     .catch(next)
   }
