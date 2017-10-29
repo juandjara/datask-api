@@ -32,16 +32,6 @@ class TaskController extends Controller {
     .then(pageDataMapped => res.json(pageDataMapped))
     .catch(next)
   }
-  create(req, res, next) {
-    const body = {
-      ...req.body,
-      project: req.params.projectId
-    }
-    this.facade.create(body)
-      .then(doc => res.status(201).json(doc))
-      .catch(err => next(err));
-  }
-
 }
 
 module.exports = new TaskController(taskFacade);
