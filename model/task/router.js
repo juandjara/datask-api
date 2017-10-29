@@ -3,19 +3,33 @@ const Router = require('express').Router;
 const router = new Router();
 const projectController = require('../project/controller')
 
-const checkPermission = projectController.userIsManager.bind(projectController)
+const checkPermission = projectController.userIsMember()
 
-router.use(checkPermission)
+router.post('/',
+  checkPermission,
+  (...args) => controller.create(...args));
 
-router.post('/', (...args) => controller.create(...args));
+router.get('/by_project/:projectId',
+  checkPermission,
+  (...args) => controller.findByProject(...args))
 
-router.get('/by_project/:projectId', (...args) => controller.findByProject(...args))
-router.get('/by_user/:userId', (...args) => controller.findByUser(...args))
+router.get('/by_user/:userId',
+  checkPermission,
+  (...args) => controller.findByUser(...args))
 
 router.route('/:id')
-  .put((...args) => controller.update(...args))
-  .get((...args) => controller.findById(...args))
-  .delete((...args) => controller.remove(...args));
+  .get(
+    checkPermission,
+    (...args) => controller.findById(...args)
+  )
+  .put(
+    checkPermission,
+    (...args) => controller.update(...args)
+  )
+  .delete(
+    checkPermission,
+    (...args) => controller.remove(...args)
+  );
 
 router.endpoint = '/task'
 

@@ -50,34 +50,36 @@ class ProjectController extends Controller {
     })
     .catch(next)
   }
-  userIsMember(req, res, next) {
-    const {roles} = req.user
-    const isAdmin = roles.indexOf("ADMIN") !== -1
-    const isDeveloper = roles.indexOf("DEVELOPER") !== -1
+  userIsMember() {
+    return (req, res, next) => {
+      const {roles} = req.user
+      const isAdmin = roles.indexOf("ADMIN") !== -1
+      const isDeveloper = roles.indexOf("DEVELOPER") !== -1
 
-    if (isAdmin) {
-      next()
-      return
-    }
-    if (!isDeveloper) {
-      next(boom.forbidden("You must ADMIN or DEVELOPER to perform this action"))
-      return
-    }
-    const userId = req.user._id
-    const projectId = req.params.id
-
-    this.facade.findById(projectId)
-    .then(project => {
-      const isManager = project.manager && project.manager._id.toString() === userId
-      const isMember  = project.users.some(user => user.id === userId)
-
-      if (!isMember && !isManager) {
-        next(boom.forbidden('You must be member or manager of this project to perform this action'))
+      if (isAdmin) {
+        next()
         return
       }
-      next()
-    })
-    .catch(next)
+      if (!isDeveloper) {
+        next(boom.forbidden("You must be ADMIN or DEVELOPER to perform this action"))
+        return
+      }
+      const userId = req.user._id
+      const projectId = req.params.projectId || req.body.project
+  
+      this.facade.findById(projectId)
+      .then(project => {
+        const isManager = project.manager && project.manager._id.toString() === userId
+        const isMember  = project.users.some(user => user._id.toString() === userId)
+  
+        if (!isMember && !isManager) {
+          next(boom.forbidden('You must be member or manager of this project to perform this action'))
+          return
+        }
+        next()
+      })
+      .catch(next)
+    }
   }
 }
 
