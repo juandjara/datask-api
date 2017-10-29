@@ -18,10 +18,7 @@ router.get('/by_user/:userId',
   (...args) => controller.findByUser(...args))
 
 router.route('/:id')
-  .get(
-    checkPermission,
-    (...args) => controller.findById(...args)
-  )
+  .get((...args) => controller.findById(...args))
   .put(
     checkPermission,
     (...args) => controller.update(...args)
