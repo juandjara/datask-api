@@ -28,12 +28,17 @@ const taskSchema = new Schema({
   comments: [{
     publishedAt: {
       type: Date,
-      required: true
+      default: new Date()
     },
     authorName: {
       type: String,
       required: true,
       trim: true
+    },
+    authorId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
     },
     body: {
       type: String,
