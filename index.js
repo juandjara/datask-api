@@ -1,9 +1,8 @@
 const app      = require('./server')
 const config   = require('./config')
 const mongoose = require('mongoose')
-const bluebird = require('bluebird')
 
-mongoose.Promise = bluebird
+mongoose.Promise = global.Promise
 mongoose.connect(config.mongo.url, {useMongoClient: true})
 
 app.listen(config.server.port, () => {
