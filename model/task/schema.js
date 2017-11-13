@@ -28,7 +28,7 @@ const taskSchema = new Schema({
   comments: [{
     publishedAt: {
       type: Date,
-      default: new Date()
+      default: Date.now
     },
     authorName: {
       type: String,
