@@ -46,6 +46,10 @@ const userSchema = new Schema({
   company: {
     type: Schema.Types.ObjectId,
     ref: 'Company'
+  },
+  activeTask: {
+    type: Schema.Types.ObjectId,
+    ref: 'Task'
   }
 }, {id: false, toJSON: {virtuals: true}});
 
