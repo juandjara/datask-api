@@ -13,6 +13,23 @@ class ProjectController extends Controller {
     .then(pageDataMapped => res.json(pageDataMapped))
     .catch(next)
   }
+  findByCurrentUser(req, res, next) {
+    const {sort, page = 0, size = 5, q} = req.query
+    const userId = req.user._id
+    const query = {
+      $or: [
+        {users: {_id: userId}},
+        {manager: userId}
+      ],
+      name: {
+        $regex: new RegExp(q),
+        $options: 'i'
+      }
+    }
+    return this.facade.paginate(page, size, sort, query)
+    .then(pageDataMapped => res.json(pageDataMapped))
+    .catch(next)
+  }
   addUser(req, res, next) {
     const {id, userId} = req.params
     this.facade.findById(id)
@@ -66,12 +83,12 @@ class ProjectController extends Controller {
       }
       const userId = req.user._id
       const projectId = req.params.projectId || req.body.project
-  
+
       this.facade.findById(projectId)
       .then(project => {
         const isManager = project.manager && project.manager._id.toString() === userId
         const isMember  = project.users.some(user => user._id.toString() === userId)
-  
+
         if (!isMember && !isManager) {
           next(boom.forbidden('You must be member or manager of this project to perform this action'))
           return
