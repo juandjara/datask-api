@@ -13,9 +13,9 @@ router.get('/by_project/:projectId',
   checkPermission,
   (...args) => controller.findByProject(...args))
 
-router.get('/by_user/:userId',
+router.get('/by_asignee/:userId',
   checkPermission,
-  (...args) => controller.findByUser(...args))
+  (...args) => controller.findByAsignee(...args))
 
 router.route('/:id')
   .get((...args) => controller.findById(...args))

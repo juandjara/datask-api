@@ -19,7 +19,7 @@ class TaskController extends Controller {
     .then(pageDataMapped => res.json(pageDataMapped))
     .catch(next)
   }
-  findByUser(req, res, next) {
+  findByAsignee(req, res, next) {
     const {sort, page = 0, size = 5, q} = req.query
     const query = {
       asignee: req.params.userId,
