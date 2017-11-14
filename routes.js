@@ -6,8 +6,9 @@ const user = require('./model/user/router');
 const project = require('./model/project/router')
 const company = require('./model/company/router')
 const task = require('./model/task/router')
+const time = require('./model/time/router')
 
-const routes = [user, project, company, task];
+const routes = [user, project, company, task, time];
 const startDate = new Date();
 
 router.get('/', (req, res) => {
