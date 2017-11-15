@@ -50,7 +50,8 @@ const userSchema = new Schema({
   activeTask: {
     type: Schema.Types.ObjectId,
     ref: 'Task'
-  }
+  },
+  activeTimeStart: Date
 }, {id: false, toJSON: {virtuals: true}});
 
 userSchema.plugin(uniqueValidator)

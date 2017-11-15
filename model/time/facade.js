@@ -4,18 +4,24 @@ const userFacade = require('../user/facade');
 
 class TimeFacade extends Facade {
   create(body) {
-    const timePromise = new this.Schema(body).save();
-    const userPromise = userFacade.findByIdAndUpdate(body.user, {activeTask: body.task})
-    return Promise.all([timePromise, userPromise])
+    const time = new this.Schema(body)
+    const userUpdate = userFacade.update(
+      {_id: body.user},
+      {$set: {activeTimeStart: time.startTime, activeTask: body.task}}
+    )
+    return Promise.all([time.save(), userUpdate])
   }
   finish(id, body) {
     const data = {
       ...body,
       endTime: Date.now()
     }
-    const userPromise = userFacade.findByIdAndUpdate(body.user, {activeTask: null})
-    const timePromise = this.Schema.findByIdAndUpdate(id, data)
-    return Promise.all([timePromise, userPromise])
+    const userUpdate = userFacade.update(
+      {_id: body.user},
+      {$set: {activeTimeStart: null, activeTask: null}}
+    )
+    const timeUpdate = this.Schema.findByIdAndUpdate(id, data)
+    return Promise.all([timeUpdate, userUpdate])
   }
 }
 
