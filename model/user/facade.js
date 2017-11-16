@@ -17,6 +17,7 @@ class UserFacade extends Facade {
     }
     return this.Schema
       .findById(...args)
+      .populate('activeTime')
       .populate('company', 'name _id')
       .exec();
   }
