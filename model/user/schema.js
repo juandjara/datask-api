@@ -47,11 +47,10 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Company'
   },
-  activeTask: {
+  activeTime: {
     type: Schema.Types.ObjectId,
-    ref: 'Task'
-  },
-  activeTimeStart: Date
+    ref: 'Time'
+  }
 }, {id: false, toJSON: {virtuals: true}});
 
 userSchema.plugin(uniqueValidator)

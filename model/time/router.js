@@ -9,7 +9,7 @@ const checkAdmin = jwtRoles.check('ADMIN')
 const checkOwner = controller.userIsOwner.bind(controller)
 
 router.route('/')
-  .get((...args) => controller.find(...args))
+  // .get((...args) => controller.find(...args))
   .post(checkOwner,
        (...args) => controller.create(...args));
 

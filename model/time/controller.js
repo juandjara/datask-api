@@ -5,12 +5,12 @@ const boom = require('boom')
 class TimeController extends Controller {
   create(req, res, next) {
     this.facade.create(req.body)
-      .then(doc => res.status(201).json(doc[0]))
+      .then(doc => res.status(201).json(doc))
       .catch(err => next(err));
   }
   finish(req, res, next) {
     this.facade.finish(req.params.id, req.body)
-      .then(doc => res.json(doc[0]))
+      .then(doc => res.json(doc))
       .catch(err => next(err))
   }
   findByTask(req, res, next) {
