@@ -10,11 +10,7 @@ class TimeFacade extends Facade {
       userFacade.update(
         {_id: body.user},
         {$set: {activeTime: time._id.toString()}}
-      , (err) => {
-        if (err) {
-          Promise.reject(err)
-        }
-      })
+      )
       return time
     })
   }
