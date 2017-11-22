@@ -4,14 +4,16 @@ const router = new Router();
 const jwtRoles = require('express-jwt-permissions')({
   permissionsProperty: 'roles'
 })
+const projectController = require('../project/controller')
+
 
 const checkAdmin = jwtRoles.check('ADMIN')
 const checkOwner = controller.userIsOwner.bind(controller)
+const checkProjectMember = projectController.userIsMember()
 
 router.route('/')
   // .get((...args) => controller.find(...args))
-  .post(checkOwner,
-       (...args) => controller.create(...args));
+  .post(checkProjectMember, (...args) => controller.create(...args));
 
 router.route('/:id')
   .put(checkOwner,
