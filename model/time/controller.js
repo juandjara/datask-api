@@ -64,7 +64,7 @@ class TimeController extends Controller {
         return
       }
       next()
-    })
+    }).catch(next)
   }
 }
 
