@@ -59,7 +59,7 @@ class TimeController extends Controller {
     const currentUserId = req.user._id
     this.facade.findById(timeId)
     .then(time => {
-      if (time.user !== currentUserId) {
+      if (time.user.toString() !== currentUserId) {
         next(boom.forbidden('You must be owner of this time or ADMIN to perform this action'))
         return
       }
