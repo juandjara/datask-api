@@ -3,6 +3,10 @@ const timeSchema = require('./schema');
 const userFacade = require('../user/facade');
 
 class TimeFacade extends Facade {
+  find(...args) {
+    return this.Schema
+      .find(...args)
+  }
   create(body) {
     const time = new this.Schema(body)
     return this.update(

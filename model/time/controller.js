@@ -33,10 +33,10 @@ class TimeController extends Controller {
     .catch(next)
   }
   findByUser(req, res, next) {
-    const {sort = '-startTime', page = 0, size = 5} = req.query
-    const query = {
-      user: req.params.userId
-    }
+    const isAdmin = req.user.roles.indexOf("ADMIN") !== -1
+    const user = isAdmin ? req.params.userId : req.user._id
+    const {sort = '-startTime', size = 5} = req.query
+    const query = {user}
     const populate = [{
       path: 'task',
       select: 'name _id'
@@ -47,8 +47,14 @@ class TimeController extends Controller {
       path: 'user',
       select: 'name surname _id'
     }]
-    return this.facade.paginate(page, size, sort, query, populate)
-    .then(pageDataMapped => res.json(pageDataMapped))
+    return this.facade
+    .find(query)
+    .limit(size)
+    .sort(sort)
+    .populate(populate)
+    // .paginate(page, size, sort, query, populate)
+    .exec()
+    .then(times => res.json(times))
     .catch(next)
   }
   userIsOwner(req, res, next) {

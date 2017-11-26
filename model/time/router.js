@@ -24,7 +24,7 @@ router.route('/:id')
 router.get('/by_task/:taskId',
            (...args) => controller.findByTask(...args))
 
-router.get('/by_user/:userId', checkAdmin,
+router.get('/by_user/:userId',
            (...args) => controller.findByUser(...args))
 
 router.post('/:id/finish', checkOwner,
