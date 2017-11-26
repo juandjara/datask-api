@@ -10,13 +10,12 @@ class TimeFacade extends Facade {
       {$set: {endTime: Date.now()}}
     )
     .then(() => time.save())
-    .then(time => {
+    .then(time => (
       userFacade.update(
         {_id: body.user},
         {$set: {activeTime: time._id.toString()}}
-      )
-      return time
-    })
+      ).then(() => time)
+    ))
   }
   finish(id, body) {
     const data = {

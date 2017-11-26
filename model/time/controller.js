@@ -18,10 +18,16 @@ class TimeController extends Controller {
     const query = {
       task: req.params.taskId
     }
-    const populate = {
+    const populate = [{
+      path: 'task',
+      select: 'name _id'
+    }, {
+      path: 'project',
+      select: 'name _id'
+    }, {
       path: 'user',
       select: 'name surname _id'
-    }
+    }]
     return this.facade.paginate(page, size, sort, query, populate)
     .then(pageDataMapped => res.json(pageDataMapped))
     .catch(next)
@@ -37,6 +43,9 @@ class TimeController extends Controller {
     }, {
       path: 'project',
       select: 'name _id'
+    }, {
+      path: 'user',
+      select: 'name surname _id'
     }]
     return this.facade.paginate(page, size, sort, query, populate)
     .then(pageDataMapped => res.json(pageDataMapped))
