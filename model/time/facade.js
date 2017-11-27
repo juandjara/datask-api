@@ -1,11 +1,31 @@
 const Facade = require('../../lib/facade');
 const timeSchema = require('./schema');
 const userFacade = require('../user/facade');
+const boom = require('boom')
+const objectIdValidator = require('valid-objectid')
 
 class TimeFacade extends Facade {
   find(...args) {
     return this.Schema
       .find(...args)
+  }
+  findById(id, ...args) {
+    if (!objectIdValidator.isValid(id)) {
+      return Promise.reject(boom.badRequest('ObjectId is not valid'))
+    }
+    return this.Schema
+      .findById(id, ...args)
+      .populate([{
+        path: 'task',
+        select: 'name _id'
+      }, {
+        path: 'project',
+        select: 'name _id'
+      }, {
+        path: 'user',
+        select: 'name surname _id'
+      }])
+      .exec();
   }
   create(body) {
     const time = new this.Schema(body)

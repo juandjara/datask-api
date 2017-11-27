@@ -1,13 +1,8 @@
 const controller = require('./controller');
 const Router = require('express').Router;
 const router = new Router();
-const jwtRoles = require('express-jwt-permissions')({
-  permissionsProperty: 'roles'
-})
 const projectController = require('../project/controller')
 
-
-const checkAdmin = jwtRoles.check('ADMIN')
 const checkOwner = controller.userIsOwner.bind(controller)
 const checkProjectMember = projectController.userIsMember()
 
@@ -29,6 +24,8 @@ router.get('/by_user/:userId',
 
 router.post('/:id/finish', checkOwner,
             (...args) => controller.finish(...args))
+
+router.get('/:id', (...args) => controller.findById(...args))
 
 router.endpoint = '/time'
 
