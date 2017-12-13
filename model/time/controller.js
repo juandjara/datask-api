@@ -76,6 +76,13 @@ class TimeController extends Controller {
       next()
     }).catch(next)
   }
+  agregateRecentTimeOfTaskForUser(req, res, next) {
+    const isAdmin = req.user.roles.indexOf("ADMIN") !== -1
+    const user = isAdmin ? req.params.userId : req.user._id
+    this.facade.groupedByTask(user)
+    .then(docs => res.json(docs))
+    .catch(next)
+  }
 }
 
 module.exports = new TimeController(timeFacade);

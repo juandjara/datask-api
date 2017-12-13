@@ -20,12 +20,13 @@ router.get('/by_task/:taskId',
            (...args) => controller.findByTask(...args))
 
 router.get('/by_user/:userId',
-           (...args) => controller.findByUser(...args))
+           (...args) => controller.agregateRecentTimeOfTaskForUser(...args))
 
 router.post('/:id/finish', checkOwner,
             (...args) => controller.finish(...args))
 
 router.get('/:id', (...args) => controller.findById(...args))
+
 
 router.endpoint = '/time'
 

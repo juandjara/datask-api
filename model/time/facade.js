@@ -3,6 +3,7 @@ const timeSchema = require('./schema');
 const userFacade = require('../user/facade');
 const boom = require('boom')
 const objectIdValidator = require('valid-objectid')
+const { Types } = require('mongoose')
 
 class TimeFacade extends Facade {
   find(...args) {
@@ -53,6 +54,77 @@ class TimeFacade extends Facade {
     const timeUpdate = this.findByIdAndUpdate(id, data)
     return Promise.all([timeUpdate, userUpdate])
     .then(results => results[0])
+  }
+
+  groupedByTask(userId) {
+    return this.Schema.aggregate([
+      {$match: {user: new Types.ObjectId(userId)}},
+      {$sort: {startTime: -1}},
+      {
+        $lookup: {
+          from: 'tasks',
+          localField: 'task',
+          foreignField: '_id',
+          as: 'task'
+        }
+      },
+      {
+        $lookup: {
+          from: 'projects',
+          localField: 'project',
+          foreignField: '_id',
+          as: 'project'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      {$unwind: '$task'},
+      {$unwind: '$project'},
+      {$unwind: '$user'},
+      {
+        $project: {
+          task: {
+            _id: 1,
+            name: 1
+          },
+          project: {
+            _id: 1,
+            name: 1
+          },
+          user: {
+            _id: 1,
+            name: 1,
+            surname: 1
+          },
+          startTime: 1,
+          endTime: 1
+        }
+      },
+      {
+        $group: {
+          _id: '$task._id',
+          times: {
+            $push: '$$ROOT'
+          }
+        }
+      },
+      {
+        $project: {
+          times: {
+            $arrayElemAt: ["$times", 0]
+          }
+        }
+      },
+      {$sort: {'times.startTime': -1}},
+      {$replaceRoot: {newRoot: '$times'}},
+      {$limit: 5}
+    ])
   }
 }
 
