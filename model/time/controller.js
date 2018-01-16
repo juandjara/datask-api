@@ -83,6 +83,15 @@ class TimeController extends Controller {
     .then(docs => res.json(docs))
     .catch(next)
   }
+  aggregateByProject(req, res, next) {
+    const isAdmin = req.user.roles.indexOf("ADMIN") !== -1
+    const user = isAdmin ? req.query.userId : req.user._id
+    const startDate = req.query.startDate
+    const endDate = req.query.endDate
+    this.facade.groupedByProject(user, startDate, endDate)
+    .then(docs => res.json(docs))
+    .catch(next)
+  }
 }
 
 module.exports = new TimeController(timeFacade);

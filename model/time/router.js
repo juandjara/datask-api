@@ -10,6 +10,9 @@ router.route('/')
   // .get((...args) => controller.find(...args))
   .post(checkProjectMember, (...args) => controller.create(...args));
 
+router.get('/by_project',
+  (...args) => controller.aggregateByProject(...args))    
+
 router.route('/:id')
   .put(checkOwner,
       (...args) => controller.update(...args))
@@ -21,6 +24,7 @@ router.get('/by_task/:taskId',
 
 router.get('/by_user/:userId',
            (...args) => controller.agregateRecentTimeOfTaskForUser(...args))
+
 
 router.post('/:id/finish', checkOwner,
             (...args) => controller.finish(...args))

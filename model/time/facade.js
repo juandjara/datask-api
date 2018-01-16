@@ -126,6 +126,76 @@ class TimeFacade extends Facade {
       {$limit: 5}
     ])
   }
+  groupedByProject(userId, startDate, endDate) {
+    const user_id = new Types.ObjectId(userId);
+    return this.Schema.aggregate([
+      {
+        $match: {
+          user: user_id,
+          startTime: {
+            $gt: new Date(startDate),
+            $lt: new Date(endDate)
+          }
+        }
+      },
+      {$sort: {startTime: 1}},
+      {
+        $lookup: {
+          from: 'tasks',
+          localField: 'task',
+          foreignField: '_id',
+          as: 'task'
+        }
+      },
+      {
+        $lookup: {
+          from: 'projects',
+          localField: 'project',
+          foreignField: '_id',
+          as: 'project'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      {$unwind: '$task'},
+      {$unwind: '$project'},
+      {$unwind: '$user'},
+      {
+        $project: {
+          task: {
+            _id: 1,
+            name: 1
+          },
+          project: {
+            _id: 1,
+            name: 1
+          },
+          user: {
+            _id: 1,
+            name: 1,
+            surname: 1
+          },
+          startTime: 1,
+          endTime: 1
+        }
+      },
+      {
+        $group: {
+          _id: '$project._id',
+          times: {$push: '$$ROOT'},
+          totalTime: {
+            $sum: {$subtract: ['$startTime', '$endTime']}
+          }
+        }
+      }
+    ]);
+  }
 }
 
 module.exports = new TimeFacade(timeSchema);
