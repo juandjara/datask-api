@@ -30,7 +30,7 @@ class TimeController extends Controller {
   findByUser(req, res, next) {
     const isAdmin = req.user.roles.indexOf("ADMIN") !== -1
     const user = isAdmin ? req.params.userId : req.user._id
-    const {sort = '-startTime', size = 5} = req.query
+    const {page = 0, sort = '-startTime', size = 5} = req.query
     const query = {user}
     const populate = [{
       path: 'task',
@@ -43,12 +43,12 @@ class TimeController extends Controller {
       select: 'name surname _id'
     }]
     return this.facade
-    .find(query)
-    .limit(size)
-    .sort(sort)
-    .populate(populate)
-    // .paginate(page, size, sort, query, populate)
-    .exec()
+    // .find(query)
+    // .limit(size)
+    // .sort(sort)
+    // .populate(populate)
+    .paginate(page, size, sort, query, populate)
+    // .exec()
     .then(times => res.json(times))
     .catch(next)
   }
@@ -90,6 +90,13 @@ class TimeController extends Controller {
     const endDate = req.query.endDate
     this.facade.groupedByProject(user, startDate, endDate)
     .then(docs => res.json(docs))
+    .catch(next)
+  }
+  getTotalTimes(req, res, next) {
+    const isAdmin = req.user.roles.indexOf("ADMIN") !== -1
+    const user = isAdmin ? (req.query.userId || req.user._id) : req.user._id
+    return this.facade.getTotalTimes(user)
+    .then(times => res.json(times))
     .catch(next)
   }
 }

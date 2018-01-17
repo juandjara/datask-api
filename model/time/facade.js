@@ -4,6 +4,7 @@ const userFacade = require('../user/facade');
 const boom = require('boom')
 const objectIdValidator = require('valid-objectid')
 const { Types } = require('mongoose')
+const moment = require('moment');
 
 class TimeFacade extends Facade {
   find(...args) {
@@ -55,7 +56,47 @@ class TimeFacade extends Facade {
     return Promise.all([timeUpdate, userUpdate])
     .then(results => results[0])
   }
+  getTotalTimes(userId) {
+    const user = new Types.ObjectId(userId);
+    const today = moment();
+    const prevMonth = moment().subtract(1, 'month').toDate();
+    return this.Schema.find({
+      user,
+      startTime: {$gte: prevMonth}
+    })
+    .exec()
+    .then(times => times.map(t => t.toJSON()))
+    .then(times => times.map(t => ({
+      ...t,
+      endTime: new Date(t.endTime),
+      startTime: new Date(t.startTime)
+    })))
+    .then(times => times.map(t => ({
+      ...t,
+      totalTime: moment(t.endTime).diff(t.startTime, 'seconds')
+    })))
+    .then(times => {
+      const dayTotalTime = times.filter(t => (
+        moment(t.startTime).isSame(today, 'day')
+      ))
+      .map(t => t.totalTime)
+      .reduce((prev, next) => prev + next, 0)
 
+      const weekTotalTime = times.filter(t => (
+        moment(t.startTime).isSame(today, 'week')
+      ))
+      .map(t => t.totalTime)
+      .reduce((prev, next) => prev + next, 0)
+
+      const monthTotalTime = times.reduce((prev, next) => (
+        prev + next.totalTime
+      ), 0)
+
+      return {
+        dayTotalTime, weekTotalTime, monthTotalTime
+      }
+    })
+  }
   groupedByTask(userId) {
     return this.Schema.aggregate([
       {$match: {user: new Types.ObjectId(userId)}},
@@ -127,11 +168,11 @@ class TimeFacade extends Facade {
     ])
   }
   groupedByProject(userId, startDate, endDate) {
-    const user_id = new Types.ObjectId(userId);
+    const user = new Types.ObjectId(userId);
     return this.Schema.aggregate([
       {
         $match: {
-          user: user_id,
+          user,
           startTime: {
             $gt: new Date(startDate),
             $lt: new Date(endDate)
@@ -190,7 +231,7 @@ class TimeFacade extends Facade {
           _id: '$project._id',
           times: {$push: '$$ROOT'},
           totalTime: {
-            $sum: {$subtract: ['$startTime', '$endTime']}
+            $sum: {$subtract: ['$endTime', '$startTime']}
           }
         }
       }
